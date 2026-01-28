@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Barışalım mı?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #ffe6f0 0, #ffb3d1 40%, #ff8fbf 70%, #ff6fa8 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      color: #4a1033;
+    }
+
+    .container {
+      text-align: center;
+      padding: 24px 32px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.85);
+      box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.18),
+        0 0 0 1px rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(16px);
+      max-width: 480px;
+      width: 90%;
+      position: relative;
+      z-index: 2;
+      transition: transform 0.35s ease, opacity 0.35s ease;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    button {
+      cursor: pointer;
+      border-radius: 999px;
+      border: none;
+      font-size: 1.1rem;
+      padding: 10px 26px;
+      font-weight: 600;
+      transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease,
+        color 0.25s ease;
+    }
+
+    #yesBtn {
+      background: linear-gradient(135deg, #ff4b8b, #ff7ab8);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(255, 75, 139, 0.45);
+    }
+
+    #yesBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 32px rgba(255, 75, 139, 0.6);
+    }
+
+    #noBtn {
+      background: #fff;
+      color: #ff4b8b;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+      border: 1px solid rgba(255, 75, 139, 0.2);
+    }
+
+    #noBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.16);
+      background: #ffe6f3;
+    }
+
+    .hearts-container {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .heart {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      background: radial-gradient(circle at 30% 30%, #fff 0, #ff2f72 40%, #c30045 100%);
+      transform: rotate(45deg);
+      animation: floatUp 5s ease-in infinite;
+      opacity: 0;
+    }
+
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      background: inherit;
+      border-radius: 50%;
+    }
+
+    .heart::before {
+      top: -11px;
+      left: 0;
+    }
+
+    .heart::after {
+      left: -11px;
+      top: 0;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) scale(0.6) rotate(45deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.9;
+      }
+      100% {
+        transform: translateY(-110vh) scale(1) rotate(45deg);
+        opacity: 0;
+      }
+    }
+
+    .result {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
+      background: radial-gradient(circle at top, #ffe6f5 0, #ffc2e3 40%, #ff9fd2 70%, #ff7bbf 100%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+      z-index: 3;
+    }
+
+    .result.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .result-message {
+      font-size: 2rem;
+      max-width: 600px;
+      margin-bottom: 24px;
+      color: #4a1033;
+    }
+
+    .cat-wrapper {
+      max-width: min(360px, 80vw);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+      transform: translateY(12px);
+      opacity: 0;
+      animation: catIn 0.9s ease forwards 0.2s;
+    }
+
+    .cat-wrapper img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    @keyframes catIn {
+      from {
+        transform: translateY(40px) scale(0.9);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    .sparkle {
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(255, 255, 255, 0.6) 1px, transparent 2px),
+        radial-gradient(circle, rgba(255, 255, 255, 0.4) 1px, transparent 2px);
+      background-position: 0 0, 25px 25px;
+      background-size: 50px 50px;
+      mix-blend-mode: screen;
+      opacity: 0.45;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sparkle"></div>
+  <div class="hearts-container" id="heartsContainer"></div>
+
+  <div class="container" id="mainCard">
+    <h1>Barışalım mı ?</h1>
+    <div class="buttons">
+      <button id="yesBtn">Evet 💖</button>
+      <button id="noBtn">Hayır 😭</button>
+    </div>
+  </div>
+
+  <div class="result" id="resultScreen">
+    <div class="result-message">
+      bunu seçeceğini biliyordum Canım Sevgilim 💕
+    </div>
+    <div class="cat-wrapper">
+      <img
+        src="./sevgili-kedimiz.jfif"
+        alt="Sevimli kedi"
+      />
+    </div>
+  </div>
+
+  <script>
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const mainCard = document.getElementById("mainCard");
+    const heartsContainer = document.getElementById("heartsContainer");
+    const resultScreen = document.getElementById("resultScreen");
+
+    let yesScale = 1;
+
+    function updateYesButtonSize() {
+      const baseFont = 1.1;
+      const basePadY = 10;
+      const basePadX = 26;
+
+      yesBtn.style.fontSize = `${baseFont * yesScale}rem`;
+      yesBtn.style.padding = `${basePadY * yesScale}px ${basePadX * yesScale}px`;
+
+      // Hayır butonunu kenara ittirme efekti
+      noBtn.style.transform = `translateX(${yesScale * 12}px)`;
+
+      const rect = yesBtn.getBoundingClientRect();
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+
+      // Evet butonu ekranı neredeyse kaplayınca Hayır'ın üstünü kapat
+      if (rect.width >= vw * 0.9 || rect.height >= vh * 0.4) {
+        noBtn.style.opacity = "0";
+        noBtn.style.pointerEvents = "none";
+        yesBtn.style.position = "relative";
+        yesBtn.style.zIndex = "5";
+      }
+    }
+
+    noBtn.addEventListener("click", () => {
+      yesScale *= 2;
+      updateYesButtonSize();
+    });
+
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+
+      const startLeft = Math.random() * 100;
+      const delay = Math.random() * 3;
+      const duration = 4 + Math.random() * 3;
+      const size = 14 + Math.random() * 26;
+
+      heart.style.left = startLeft + "vw";
+      heart.style.bottom = "-40px";
+      heart.style.animationDuration = duration + "s";
+      heart.style.animationDelay = delay + "s";
+      heart.style.width = size + "px";
+      heart.style.height = size + "px";
+
+      heartsContainer.appendChild(heart);
+
+      setTimeout(() => {
+        heart.remove();
+      }, (duration + delay) * 1000);
+    }
+
+    function startHeartsBurst() {
+      for (let i = 0; i < 60; i++) {
+        setTimeout(createHeart, i * 70);
+      }
+    }
+
+    yesBtn.addEventListener("click", () => {
+      mainCard.style.opacity = "0";
+      mainCard.style.transform = "scale(0.98) translateY(10px)";
+
+      setTimeout(() => {
+        mainCard.style.display = "none";
+        resultScreen.classList.add("visible");
+      }, 350);
+
+      startHeartsBurst();
+      setInterval(createHeart, 600);
+    });
+  </script>
+</body>
+</html>
+
